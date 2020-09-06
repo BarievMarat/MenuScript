@@ -1,0 +1,78 @@
+#!/bin/bash
+#скрипт-меню с выбором действий
+while true; do
+
+#вывод меню
+echo "Выберите пункт меню
+1. Создать каталог
+2. Сменить текущий каталог
+3. Напечатать содержимое текущего каталога
+4. Создать файл
+5. Удалить файл
+6. Выйти из программы"
+
+
+read menuItem #читаем введенный пункт меню
+case "$menuItem" in
+	#если выбран пункт "Создать каталог"
+	1) echo "Введите название каталога"
+	read newDirectory
+	if [ -e $newDirectory ]
+	then
+		echo "Нельзя создать каталог с таким именем"
+		mkdir $newDirectory 2>>logfile
+	else
+		mkdir $newDirectory
+	fi
+	;;
+	
+	#если выбран пункт "Сменить каталог"
+	2) echo "Введите путь каталога, в который вы хотите перейти"
+	find $PWD -maxdepth 1 -type d
+	read chDirectory
+	if [ -e $chDirectory ]
+	then 
+		cd $chDirectory
+	else
+		echo "Такого каталога нет"
+		cd $chDirectory 2>>logfile
+	fi
+	;;
+	
+	#если выбран пункт "Напечатать содержимое текущего каталога"
+	3) ls
+	;;
+	
+	#если выбран пункт "Создать файл"
+	4) echo "Введите название создаваемого файла"
+	read newFile
+	touch $newFile
+	;;
+	
+	#если выбран пункт "Удалить файл"
+	5) echo "Введите название удаляемого файла"
+	read rmFile
+	if [ -e $rmFile ]
+	then
+		echo "Вы точно хотите удалить файл $rmFile (y/n)"
+		read rmOption
+		if [ $rmOption = "y" ]
+		then
+			rm $rmFile
+		fi
+	else
+		echo "Такого файла нет"
+		rm $rmFile 2>>logfile
+	fi
+	;;
+	
+	#если выбран пункт "Выйти из программы"
+	6) break
+	;;
+	
+	#если введена не цифра просим ввести цифру
+	*) echo "Выберите действие от 1 до 6"
+	;;
+esac
+echo -e "\n" #оставляем пустую строку
+done
